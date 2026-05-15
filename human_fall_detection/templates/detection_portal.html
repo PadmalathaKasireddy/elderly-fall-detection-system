@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% set page_background = "live.jpg" %}
+
+{% block content %}
+<section class="portal-shell">
+    <span class="eyebrow">Detection portal</span>
+    <h1 class="section-title">{{ detection_info.title }}</h1>
+    <p class="section-copy">{{ detection_info.subtitle }}</p>
+    <div class="role-row">
+        <span class="role-pill">Signed in as {{ portal_user.full_name }}</span>
+        <span class="role-pill">{{ portal_user.role|replace('_', ' ')|title }}</span>
+    </div>
+
+    <div class="stats-grid">
+        {% for stat in detection_info.stats %}
+        <div class="stat-card">
+            <div class="stat-value">{{ stat.value }}</div>
+            <div>{{ stat.label }}</div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="action-grid">
+        {% for action in detection_actions %}
+        <article class="mode-card">
+            <h3>{{ action.title }}</h3>
+            <p>{{ action.description }}</p>
+            <div class="split-actions">
+                <a class="button-primary" href="{{ url_for(action.endpoint) }}">{{ action.cta }}</a>
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+
+    <div class="split-actions">
+        <a class="button-secondary" href="{{ url_for('fall_detection') }}">Open Detection Hub</a>
+        <a class="button-ghost" href="{{ url_for('logout') }}">Switch Account</a>
+    </div>
+</section>
+{% endblock %}

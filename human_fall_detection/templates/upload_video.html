@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% set page_background = "upload.jpg" %}
+
+{% block content %}
+<section class="upload-shell">
+    <span class="eyebrow">Recorded footage</span>
+    <h1 class="upload-title">{{ upload_info.title }}</h1>
+    <p class="upload-copy">{{ upload_info.subtitle }}</p>
+
+    <form method="POST" enctype="multipart/form-data">
+        <input class="file-picker" type="file" name="video" accept="video/*" required>
+        <div class="split-actions">
+            <button class="button-primary" type="submit">Start Detection</button>
+            <a class="button-ghost" href="{{ url_for('fall_detection') }}">Back to Hub</a>
+        </div>
+    </form>
+
+    <div class="tips-row">
+        {% for tip in upload_tips %}
+        <div class="tip-card">{{ tip }}</div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

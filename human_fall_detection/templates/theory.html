@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% set page_background = "about.jpg" %}
+
+{% block content %}
+<section class="section-block">
+    <span class="eyebrow">System theory</span>
+    <h1 class="section-title">How the monitoring pipeline is framed</h1>
+    <p class="section-copy">This page now uses structured content blocks so the explanation can grow later without redesigning the full page.</p>
+
+    <div class="theory-grid">
+        {% for section in theory_sections %}
+        <article class="theory-card">
+            <h3>{{ section.title }}</h3>
+            <p>{{ section.body }}</p>
+        </article>
+        {% endfor %}
+    </div>
+
+    <div class="future-strip">
+        <h3>Future-facing additions</h3>
+        <div class="future-items">
+            {% for item in future_items %}
+            <span class="future-item">{{ item }}</span>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

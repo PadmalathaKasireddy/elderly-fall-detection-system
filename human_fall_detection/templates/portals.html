@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% set page_background = "fall.jpg" %}
+
+{% block content %}
+<section class="section-block">
+    <span class="eyebrow">Role portals</span>
+    <h1 class="section-title">{{ portal_intro.title }}</h1>
+    <p class="section-copy">{{ portal_intro.subtitle }}</p>
+
+    <div class="portal-grid">
+        {% for portal in portal_cards %}
+        <article class="mode-card">
+            <span class="tag">{{ portal.tag }}</span>
+            <h3>{{ portal.title }}</h3>
+            <p>{{ portal.description }}</p>
+            <div class="split-actions">
+                <a class="button-primary" href="{{ url_for(portal.endpoint) }}">{{ portal.cta }}</a>
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

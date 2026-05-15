@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% set page_background = "live.jpg" %}
+
+{% block content %}
+<section class="stream-shell">
+    <div class="stream-copy">
+        <span class="eyebrow">Live monitoring</span>
+        <h1 class="stream-title">{{ live_info.title }}</h1>
+        <p>{{ live_info.subtitle }}</p>
+
+        <div class="status-grid">
+            {% for item in live_info.status %}
+            <div class="status-card">
+                <strong>{{ item.label }}</strong>
+                <span>{{ item.value }}</span>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="split-actions">
+            <a class="button-secondary" href="{{ url_for('stop_stream') }}">Stop Stream</a>
+            <a class="button-ghost" href="{{ url_for('fall_detection') }}">Back to Hub</a>
+        </div>
+    </div>
+
+    <div class="stream-frame">
+        <img src="{{ url_for('start_stream') }}" alt="Live Stream">
+    </div>
+</section>
+{% endblock %}

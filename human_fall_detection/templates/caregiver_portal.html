@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+
+{% set page_background = "about.jpg" %}
+
+{% block content %}
+<section class="portal-shell">
+    <span class="eyebrow">Caregiver portal</span>
+    <h1 class="section-title">{{ caregiver_info.title }}</h1>
+    <p class="section-copy">{{ caregiver_info.subtitle }}</p>
+    <div class="role-row">
+        <span class="role-pill">Signed in as {{ portal_user.full_name }}</span>
+        <span class="role-pill">{{ portal_user.role|replace('_', ' ')|title }}</span>
+    </div>
+
+    <div class="stats-grid">
+        {% for stat in caregiver_info.stats %}
+        <div class="stat-card {% if stat.label == 'Alert queue' %}interactive-stat{% endif %}" {% if stat.label == 'Alert queue' %}role="button" tabindex="0" data-open-alerts="true"{% endif %}>
+            <div class="stat-value">{{ stat.value }}</div>
+            <div>{{ stat.label }}</div>
+            {% if stat.label == 'Alert queue' %}
+            <small class="stat-hint">Click to view incident queue</small>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="panel-grid">
+        {% for panel in caregiver_panels %}
+        <article class="panel">
+            <h3>{{ panel.title }}</h3>
+            <ul>
+                {% for item in panel["items"] %}
+                <li>{{ item }}</li>
+                {% endfor %}
+            </ul>
+        </article>
+        {% endfor %}
+    </div>
+
+    <section class="section-block">
+        <h2 class="section-title">Live notifications</h2>
+        <p class="section-copy">When a detection operator triggers a live fall event, the alert appears here with the operator name and source details.</p>
+        <div class="notification-list">
+            {% if notifications %}
+                {% for notification in notifications %}
+                <article class="notification-card">
+                    <span class="tag">{{ notification.delivery_status|title }}</span>
+                    <h3>Fall detected by {{ notification.detected_by_name or 'Unknown operator' }}</h3>
+                    <p>{{ notification.source_label or 'Live stream' }} triggered an alert for caregiver review.</p>
+                    <div class="notification-meta">
+                        <span>{{ notification.detected_at.strftime('%Y-%m-%d %H:%M:%S') if notification.detected_at else 'Pending time' }}</span>
+                        <span>{{ notification.channel|upper }}</span>
+                    </div>
+                </article>
+                {% endfor %}
+            {% else %}
+                <article class="notification-card empty">
+                    <h3>No notifications yet</h3>
+                    <p>Once a logged-in detection operator detects a fall in live monitoring, the alert will appear here.</p>
+                </article>
+            {% endif %}
+        </div>
+    </section>
+
+    <div class="modal-overlay" id="alerts-modal" aria-hidden="true">
+        <div class="modal-panel">
+            <div class="modal-header">
+                <div>
+                    <span class="eyebrow">Incident queue</span>
+                    <h2 class="section-title">Fall alert records</h2>
+                </div>
+                <button class="modal-close" type="button" data-close-alerts="true" aria-label="Close alert queue">x</button>
+            </div>
+            <div class="modal-body">
+                <p class="section-copy">This table shows who detected the fall, when it happened, which source triggered it, and the delivery state for caregiver review.</p>
+
+                <div class="modal-summary">
+                    <div class="modal-stat">
+                        <strong>Total alerts</strong>
+                        <span>{{ notifications|length }}</span>
+                    </div>
+                    <div class="modal-stat">
+                        <strong>Latest channel</strong>
+                        <span>{{ notifications[0].channel|upper if notifications else 'PORTAL' }}</span>
+                    </div>
+                    <div class="modal-stat">
+                        <strong>Latest operator</strong>
+                        <span>{{ notifications[0].detected_by_name if notifications else 'No incidents yet' }}</span>
+                    </div>
+                </div>
+
+                <div class="table-shell">
+                    <table class="notification-table">
+                        <thead>
+                            <tr>
+                                <th>Operator</th>
+                                <th>Incident Time</th>
+                                <th>Source</th>
+                                <th>Status</th>
+                                <th>Channel</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if notifications %}
+                                {% for notification in notifications %}
+                                <tr>
+                                    <td>{{ notification.detected_by_name or 'Unknown operator' }}</td>
+                                    <td>{{ notification.detected_at.strftime('%Y-%m-%d %H:%M:%S') if notification.detected_at else 'Pending time' }}</td>
+                                    <td>{{ notification.source_label or notification.source_type or 'Live stream' }}</td>
+                                    <td>{{ notification.delivery_status|title }}</td>
+                                    <td>{{ notification.channel|upper }}</td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="5">No alert records yet. Once live fall detection triggers, incidents will appear here.</td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="modal-feature-row">
+                    <div class="tip-card">
+                        <strong>Fast triage</strong>
+                        <p>Prioritize recent incidents by time and operator identity.</p>
+                    </div>
+                    <div class="tip-card">
+                        <strong>Audit visibility</strong>
+                        <p>Track which live stream generated the alert and how it was delivered.</p>
+                    </div>
+                    <div class="tip-card">
+                        <strong>Care workflow</strong>
+                        <p>Use this queue as the base for future acknowledgment and escalation actions.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="split-actions">
+        <a class="button-primary" href="{{ url_for('theory') }}">System Overview</a>
+        <a class="button-ghost" href="{{ url_for('logout') }}">Switch Account</a>
+    </div>
+</section>
+
+<script>
+    const alertsModal = document.getElementById('alerts-modal');
+    const openAlertsTrigger = document.querySelector('[data-open-alerts="true"]');
+    const closeAlertsButtons = document.querySelectorAll('[data-close-alerts="true"]');
+
+    function openAlertsModal() {
+        alertsModal.classList.add('open');
+        alertsModal.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('modal-open');
+    }
+
+    function closeAlertsModal() {
+        alertsModal.classList.remove('open');
+        alertsModal.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('modal-open');
+    }
+
+    if (openAlertsTrigger) {
+        openAlertsTrigger.addEventListener('click', openAlertsModal);
+        openAlertsTrigger.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                openAlertsModal();
+            }
+        });
+    }
+
+    closeAlertsButtons.forEach(function (button) {
+        button.addEventListener('click', closeAlertsModal);
+    });
+
+    alertsModal.addEventListener('click', function (event) {
+        if (event.target === alertsModal) {
+            closeAlertsModal();
+        }
+    });
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && alertsModal.classList.contains('open')) {
+            closeAlertsModal();
+        }
+    });
+</script>
+{% endblock %}

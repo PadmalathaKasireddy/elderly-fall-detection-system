@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page_title or "Fall Surveillance" }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        body {
+            --page-image: linear-gradient(135deg, rgba(4, 12, 24, 0.86), rgba(7, 26, 48, 0.76)), url('{{ url_for("static", filename=page_background or "home.jpg") }}');
+        }
+    </style>
+</head>
+<body>
+    <div class="page-shell">
+        <header class="site-header">
+            <div class="nav-bar">
+                <a class="brand" href="{% if current_user %}{{ url_for(current_portal_endpoint) }}{% else %}{{ url_for('login') }}{% endif %}">
+                    <div class="brand-mark">FS</div>
+                    <div class="brand-copy">
+                        <strong>Fall Surveillance</strong>
+                        <span>Safer monitoring for elderly care</span>
+                    </div>
+                </a>
+                <nav class="nav-links">
+                    {% if current_user %}
+                    <a class="nav-link {% if request.endpoint == current_portal_endpoint %}active{% endif %}" href="{{ url_for(current_portal_endpoint) }}">
+                        My Portal
+                    </a>
+                    <a class="nav-link {% if request.endpoint == 'theory' %}active{% endif %}" href="{{ url_for('theory') }}">
+                        Theory
+                    </a>
+                    <span class="nav-user">{{ current_user.full_name }}</span>
+                    <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+                    {% else %}
+                    <a class="nav-link {% if request.endpoint == 'login' %}active{% endif %}" href="{{ url_for('login') }}">
+                        Login
+                    </a>
+                    <a class="nav-link {% if request.endpoint == 'register' %}active{% endif %}" href="{{ url_for('register') }}">
+                        Register
+                    </a>
+                    {% endif %}
+                </nav>
+            </div>
+        </header>
+
+        <main class="content-wrap">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class="flash-stack">
+                {% for category, message in messages %}
+                <div class="flash-message {{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
+            {% block content %}{% endblock %}
+        </main>
+
+        <footer class="site-footer">
+            <small>UI refreshed for a more dynamic, scalable monitoring experience.</small>
+        </footer>
+    </div>
+</body>
+</html>

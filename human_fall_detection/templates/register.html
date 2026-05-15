@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% set page_background = "about.jpg" %}
+
+{% block content %}
+<section class="auth-shell">
+    <article class="auth-panel">
+        <span class="eyebrow">Registration</span>
+        <h1 class="section-title">{{ auth_info.title }}</h1>
+        <p class="section-copy">{{ auth_info.subtitle }}</p>
+        <div class="role-row">
+            {% for role in auth_info.roles %}
+            <span class="role-pill">{{ role.label }}</span>
+            {% endfor %}
+        </div>
+    </article>
+
+    <article class="auth-form">
+        <form method="POST">
+            <input class="auth-input" type="text" name="full_name" placeholder="Full name" value="{{ request.form.get('full_name', '') }}" required>
+            <input class="auth-input" type="email" name="email" placeholder="Email address" value="{{ request.form.get('email', '') }}" required>
+            <input class="auth-input" type="tel" name="phone_number" placeholder="Phone number" value="{{ request.form.get('phone_number', '') }}">
+            <select class="auth-select" name="role" required>
+                {% for role in auth_info.roles %}
+                <option value="{{ role.value }}" {% if request.form.get('role') == role.value %}selected{% endif %}>{{ role.label }}</option>
+                {% endfor %}
+            </select>
+            <input class="auth-input" type="password" name="password" placeholder="Create password" required>
+            <input class="auth-input" type="password" name="confirm_password" placeholder="Confirm password" required>
+            <div class="split-actions">
+                <button class="button-primary" type="submit">Create Account</button>
+                <a class="button-ghost" href="{{ url_for('login') }}">Back to Login</a>
+            </div>
+        </form>
+        <p class="auth-note">Load [`schema.sql`] into PostgreSQL, set database environment variables, and registration will create real accounts.</p>
+    </article>
+</section>
+{% endblock %}

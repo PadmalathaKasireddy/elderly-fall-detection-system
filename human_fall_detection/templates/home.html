@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% set page_background = "home.jpg" %}
+
+{% block content %}
+<section class="hero">
+    <article class="hero-card hero-copy">
+        <span class="eyebrow">{{ hero.eyebrow }}</span>
+        <h1 class="hero-title">{{ hero.title }}</h1>
+        <p class="hero-subtitle">{{ hero.subtitle }}</p>
+        <div class="hero-actions">
+            <a class="button-primary" href="{{ url_for(hero.primary.endpoint) }}">{{ hero.primary.label }}</a>
+            <a class="button-secondary" href="{{ url_for(hero.secondary.endpoint) }}">{{ hero.secondary.label }}</a>
+        </div>
+    </article>
+
+    <aside class="hero-card hero-side">
+        <span class="status-pill">System overview</span>
+        <div class="stats-grid">
+            {% for stat in hero.stats %}
+            <div class="stat-card">
+                <div class="stat-value">{{ stat.value }}</div>
+                <div>{{ stat.label }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </aside>
+</section>
+
+<section class="section-block">
+    <h2 class="section-title">Feature-ready interface</h2>
+    <p class="section-copy">The interface is now structured so content blocks, cards, and summaries can be fed dynamically from Flask without changing the visual system each time.</p>
+    <div class="cards-grid">
+        {% for card in feature_cards %}
+        <article class="feature-card">
+            <span class="card-badge">{{ card.badge }}</span>
+            <h3>{{ card.title }}</h3>
+            <p>{{ card.description }}</p>
+        </article>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="section-block">
+    <div class="panel-grid">
+        {% for panel in overview_panels %}
+        <article class="panel">
+            <h3>{{ panel.title }}</h3>
+            <ul>
+                {% for item in panel["items"] %}
+                <li>{{ item }}</li>
+                {% endfor %}
+            </ul>
+        </article>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

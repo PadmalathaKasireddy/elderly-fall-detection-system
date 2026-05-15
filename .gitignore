@@ -1,0 +1,6 @@
+venv/
+__pycache__/
+*.pyc
+.env
+input.mp4
+yolov8n.pt

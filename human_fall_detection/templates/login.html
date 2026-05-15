@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% set page_background = "home.jpg" %}
+
+{% block content %}
+<section class="auth-shell">
+    <article class="auth-panel">
+        <span class="eyebrow">Secure access</span>
+        <h1 class="section-title">{{ auth_info.title }}</h1>
+        <p class="section-copy">{{ auth_info.subtitle }}</p>
+        <div class="role-row">
+            {% for role in auth_info.roles %}
+            <span class="role-pill">{{ role.label }}</span>
+            {% endfor %}
+        </div>
+        <div class="panel-grid">
+            <article class="panel">
+                <h3>Future notification path</h3>
+                <ul>
+                    <li>Fall event reaches caregiver dashboard</li>
+                    <li>Caregiver sees escalated alerts</li>
+                    <li>Response tracking appears in the portal</li>
+                </ul>
+            </article>
+        </div>
+    </article>
+
+    <article class="auth-form">
+        <form method="POST">
+            <input class="auth-input" type="email" name="email" placeholder="Email address" value="{{ request.form.get('email', '') }}" required>
+            <input class="auth-input" type="password" name="password" placeholder="Password" required>
+            <select class="auth-select" name="role_hint">
+                {% for role in auth_info.roles %}
+                <option value="{{ role.value }}">{{ role.label }}</option>
+                {% endfor %}
+            </select>
+            <div class="split-actions">
+                <button class="button-primary" type="submit">Login to Portal</button>
+                <a class="button-ghost" href="{{ url_for('register') }}">Create Account</a>
+            </div>
+        </form>
+        <p class="auth-note">Registered users are redirected into their role portal after successful login.</p>
+    </article>
+</section>
+{% endblock %}
